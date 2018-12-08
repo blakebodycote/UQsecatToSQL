@@ -1,3 +1,10 @@
+'''
+Code to do the majority of the web scraping by Evan Hughes @ https://github.com/wisebaldone/uq-secat
+
+I (Blake Bodycote) modified the code to get certain pieces of data such as question/answer info
+and to make it simple to import the scraped data into a MySQL database. 
+'''
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -32,9 +39,7 @@ level1_num = len(elements)
 filename = "secats.JSON"
 f = open(filename, 'w')
 
-'''
-Initiate web scraping and store all course secat data in a JSON file
-'''
+# Initiate web scraping and store all course secat data in a JSON file
 for level1 in range(0, level1_num):
     level1_bar = driver.find_element_by_class_name("rtsLevel1")
     level1_elements = level1_bar.find_elements_by_class_name("rtsLink")
@@ -88,9 +93,8 @@ print("Closing Web Browser")
 driver.close()
 f.close()
 
-'''
-Convert all of our collected JSON data to a MySQL friendly database import
-'''
+
+#Convert all of our collected JSON data to a MySQL friendly database import
 sql_string = "CREATE TABLE Course (CourseID varchar(10), Name varchar(255), PRIMARY KEY (CourseID)); \n"
 sql_string += "CREATE TABLE CourseSemester ( ID varchar(20), CourseID varchar(10), Semester int, Year int, Enrolled int, Responses int, PRIMARY KEY (ID), FOREIGN KEY (CourseID) REFERENCES Course(CourseID)); \n"
 sql_string += "CREATE TABLE Question (ID int, Name varchar(50), PRIMARY KEY (ID) ); \n"
@@ -135,9 +139,6 @@ for i in f:
     count+=1
 f.close()
 
-'''
-Write the final sql file
-'''
 f = open("secat_data.sql", "w")
 f.write(sql_string)
 f.close()
